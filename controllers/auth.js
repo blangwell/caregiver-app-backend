@@ -25,7 +25,7 @@ module.exports.postSignup = async (req, res, next) => {
     };
 
     // sign and send token
-    const token = await jwt.sign(jwtPayload, JWT_SECRET, { expiresIn: 3600 });
+    const token = await jwt.sign(jwtPayload, JWT_SECRET, { expiresIn: 60 });
     return res.json({ token });
 
   } catch (err) {
@@ -36,9 +36,7 @@ module.exports.postSignup = async (req, res, next) => {
 
 module.exports.postLogin = async (req, res, next) => {
   try {
-    const user = await User.findOne({
-      email: req.body.email
-    });
+    const user = await User.findOne({ email: req.body.email });
 
     if (!user) return res.status(400).json({ msg: 'No user found with that email address' });
     const matchPasswords = await bcrypt.compare(req.body.password, user.password);
@@ -51,6 +49,7 @@ module.exports.postLogin = async (req, res, next) => {
 
     const token = await jwt.sign(jwtPayload, JWT_SECRET, { expiresIn: 3600 });
     return res.json({ token });
+
   } catch (err) {
     console.log(err);
     return res.status(500).json({ msg: 'Error logging in' });

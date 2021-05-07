@@ -1,11 +1,11 @@
 require('dotenv').config();
+require('./config/ppConfigJwt');
 const db = require('./models');
 const express = require('express');
 const helmet = require('helmet');
 const passport = require('passport');
 const SERVER_PORT = process.env.SERVER_PORT;
 const authController = require('./controllers/auth');
-const ppConfigJwt = require('./config/ppConfigJwt');
 
 const app = express();
 
@@ -13,7 +13,6 @@ app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(passport.initialize());
-// ppConfigJwt(passport);
 
 app.get('/', (req, res) => {
   res.send('home route hit!');
