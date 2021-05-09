@@ -5,22 +5,23 @@ const bcrypt = require('bcrypt');
 
 passport.use(new LocalStrategy({
   usernameField: 'email'
-}, function(username, password, done) {
+}, 
+function(username, password, cb) {
   User.findOne({ email: username }, async function(err, user) {
     if (err) {
       console.log(err);
-      return done(err);
+      return cb(err);
     }
     if (!user) {
       console.log('no user found!')
-      return done(null, false);
+      return cb(null, false);
     }
     const matchPassword = await bcrypt.compare(password, user.password);
     if (!matchPassword) {
       console.log('passwords don\'t match');
-      return done(null, false);
+      return cb(null, false);
     }
-    return done(null, user);
+    return cb(null, user);
   });
 }));
 
