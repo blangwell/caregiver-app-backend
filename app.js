@@ -8,7 +8,7 @@ const passport = require('passport');
 const SERVER_PORT = process.env.SERVER_PORT;
 const authController = require('./controllers/auth');
 const authControllerLocal = require('./controllers/authLocal');
-const User = require('./models/User');
+const userControllerLocal = require('./controllers/userLocal');
 
 const app = express();
 
@@ -25,21 +25,11 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', (req, res) => {
-  res.send('home route hit!');
-});
-
-app.post('/login', passport.authenticate('local', {failureMessage: 'couldn\'t log in'}), authControllerLocal.postLogin);
+app.get('/', (req, res) => res.send('home route hit!'));
+app.post('/signup', authControllerLocal.postSignup);
+app.post('/login', passport.authenticate('local'), authControllerLocal.postLogin);
 app.post('/logout', authControllerLocal.postLogout);
-app.get('/profile', passport.authenticate('local', {failureMessage: 'You aren\'t authorized to view that page'}) , async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    if (!user) return res.send('No user currently logged in!');
-    else return res.send(user);
-  } catch (err) {
-    console.log(err);
-  }
-  res.send('hit private route successfully!');
-});
+
+app.get('/profile', passport.authenticate('local'), userControllerLocal.getProfile);
 
 app.listen(SERVER_PORT, () => console.log(`⚡Running on port ${SERVER_PORT} ⚡️`));
