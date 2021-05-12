@@ -1,25 +1,29 @@
 require('dotenv').config();
-// require('./config/ppConfigJwt');
 require('./config/ppConfigLocal');
-const db = require('./models');
+require('./models');
+const cors = require('cors');
 const express = require('express');
 const helmet = require('helmet');
 const passport = require('passport');
 const SERVER_PORT = process.env.SERVER_PORT;
-const authController = require('./controllers/auth');
+const SESSION_SECRET = process.env.SESSION_SECRET;
 const authControllerLocal = require('./controllers/authLocal');
 const userControllerLocal = require('./controllers/userLocal');
 
 const app = express();
 
+app.use(cors());
 app.use(helmet());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(require('express-session')({
-  secret: 'uwuhewwotheyuw',
+  secret: SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 60000
+  }
 }));
 
 app.use(passport.initialize());

@@ -8,4 +8,4 @@ module.exports.getProfile = (req, res, next) => {
   } catch (err) {
     console.log(err);
   }
-}
+};
